@@ -1,0 +1,70 @@
+<div class="cliente-list">
+  <div class="container">
+    <h1>Cadastro de Clientes</h1>
+
+    <!-- Mensagens -->
+    <div *ngIf="successMessage" class="alert success">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="error" class="alert error">
+      {{ error }}
+    </div>
+
+    <!-- Barra de Ferramentas -->
+    <div class="toolbar">
+      <a routerLink="/clientes/novo" class="btn btn-primary">+ Novo Cliente</a>
+      <div class="search-box">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Buscar por nome..."
+          class="search-input"
+        />
+        <button (click)="buscar()" class="btn btn-secondary">Buscar</button>
+      </div>
+    </div>
+
+    <!-- Tabela de Clientes -->
+    <div *ngIf="loading" class="loading">
+      <p>Carregando...</p>
+    </div>
+
+    <div *ngIf="!loading && clientes.length === 0" class="no-data">
+      <p>Nenhum cliente encontrado</p>
+    </div>
+
+    <div *ngIf="!loading && clientes.length > 0" class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Email</th>
+            <th>Cidade</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cliente of clientes" [class.inactive]="cliente.status === 'INATIVO'">
+            <td>{{ cliente.id }}</td>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.email || '-' }}</td>
+            <td>{{ cliente.cidade || '-' }}</td>
+            <td>
+              <span [class.status-badge]="true" [class]="'status-' + cliente.status">
+                {{ cliente.status }}
+              </span>
+            </td>
+            <td class="actions">
+              <a [routerLink]="['/clientes', cliente.id]" class="btn btn-sm btn-info">Editar</a>
+              <button (click)="deletar(cliente.id)" class="btn btn-sm btn-danger">Deletar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

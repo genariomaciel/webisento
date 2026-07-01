@@ -1,0 +1,377 @@
+<div class="cliente-form">
+  <div class="container">
+    <h1>{{ isNew ? 'Novo Cliente' : 'Editar Cliente' }}</h1>
+
+    <!-- Mensagens -->
+    <div *ngIf="successMessage" class="alert success">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="error" class="alert error">
+      {{ error }}
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <p>Carregando...</p>
+    </div>
+
+    <form (ngSubmit)="salvar()" *ngIf="!loading" class="form">
+      <!-- Dados Pessoais -->
+      <div class="form-section">
+        <h2>Dados Pessoais</h2>
+        <div class="form-group">
+          <label>Nome *</label>
+          <input
+            type="text"
+            [(ngModel)]="cliente.nome"
+            name="nome"
+            placeholder="Nome completo"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>CPF *</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.cpf"
+              name="cpf"
+              placeholder="000.000.000-00"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>INSS</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.numeroINSS"
+              name="numeroINSS"
+              placeholder="Número do INSS"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>RG</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.numeroRG"
+              name="numeroRG"
+              placeholder="Número do RG"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Órgão Expedidor</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.codigoOrgaoExpedidor"
+              name="codigoOrgaoExpedidor"
+              placeholder="Ex: SSP"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Data Expedição</label>
+            <input
+              type="date"
+              [(ngModel)]="cliente.dataExpedicao"
+              name="dataExpedicao"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>CNH</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.numeroCNH"
+              name="numeroCNH"
+              placeholder="Número da CNH"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Data Emissão CNH</label>
+            <input
+              type="date"
+              [(ngModel)]="cliente.dataEmissaoCNH"
+              name="dataEmissaoCNH"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Data Validade CNH</label>
+            <input
+              type="date"
+              [(ngModel)]="cliente.dataValidadeCNH"
+              name="dataValidadeCNH"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Data Cadastro</label>
+            <input
+              type="date"
+              [(ngModel)]="cliente.dataCadastro"
+              name="dataCadastro"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Regime Contribuição</label>
+            <select
+              [(ngModel)]="cliente.codigoRegimeContribuicao"
+              name="codigoRegimeContribuicao"
+              class="form-control"
+            >
+              <option value="">Selecione...</option>
+              <option *ngFor="let opt of regimeContribuicaoOptions" [value]="opt.id">
+                {{ opt.nome }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo Segurado</label>
+            <select
+              [(ngModel)]="cliente.codigoTipoSegurado"
+              name="codigoTipoSegurado"
+              class="form-control"
+            >
+              <option value="">Selecione...</option>
+              <option *ngFor="let opt of tipoSeguradoOptions" [value]="opt.id">
+                {{ opt.nome }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Representante -->
+      <div class="form-section">
+        <h2>Representante</h2>
+        <div class="form-group">
+          <label>Nome Representante</label>
+          <input
+            type="text"
+            [(ngModel)]="cliente.nomeRepresentante"
+            name="nomeRepresentante"
+            placeholder="Nome completo do representante"
+            class="form-control"
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>CPF Representante</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.cpfRepresentante"
+              name="cpfRepresentante"
+              placeholder="000.000.000-00"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>RG Representante</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.numeroRGRepresentante"
+              name="numeroRGRepresentante"
+              placeholder="Número do RG"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Nome Condomínio</label>
+          <input
+            type="text"
+            [(ngModel)]="cliente.nomeCondominio"
+            name="nomeCondominio"
+            placeholder="Nome do condomínio (se houver)"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <!-- Endereço -->
+      <div class="form-section">
+        <h2>Endereço</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo Logradouro</label>
+            <select
+              [(ngModel)]="cliente.codigoTipoLogradouro"
+              name="codigoTipoLogradouro"
+              class="form-control"
+            >
+              <option value="">Selecione...</option>
+              <option *ngFor="let opt of tipoLogradouroOptions" [value]="opt.id">
+                {{ opt.nome }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Logradouro</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.nomeLogradouro"
+              name="nomeLogradouro"
+              placeholder="Nome da rua, avenida, etc"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Número</label>
+            <input
+              type="number"
+              [(ngModel)]="cliente.numeroLogradouro"
+              name="numeroLogradouro"
+              placeholder="Número"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Complemento</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.complemento"
+              name="complemento"
+              placeholder="Apto, sala, etc"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Bairro</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.bairro"
+              name="bairro"
+              placeholder="Bairro"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cidade</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.cidade"
+              name="cidade"
+              placeholder="Cidade"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <select
+              [(ngModel)]="cliente.codigoEstado"
+              name="codigoEstado"
+              class="form-control"
+            >
+              <option value="">Selecione...</option>
+              <option *ngFor="let opt of estadoOptions" [value]="opt.id">
+                {{ opt.nome }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>CEP</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.cep"
+              name="cep"
+              placeholder="00000-000"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Contato -->
+      <div class="form-section">
+        <h2>Contato</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>DDD</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.ddd"
+              name="ddd"
+              placeholder="DDD"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.telefone"
+              name="telefone"
+              placeholder="Telefone"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Celular</label>
+            <input
+              type="text"
+              [(ngModel)]="cliente.celular"
+              name="celular"
+              placeholder="Celular"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            [(ngModel)]="cliente.email"
+            name="email"
+            placeholder="email@example.com"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="form-section">
+        <h2>Status</h2>
+        <div class="form-group">
+          <label>Status</label>
+          <select
+            [(ngModel)]="cliente.status"
+            name="status"
+            class="form-control"
+          >
+            <option *ngFor="let status of statusOptions" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Botões -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <button type="button" (click)="limpar()" class="btn btn-secondary">Limpar</button>
+        <button type="button" (click)="voltar()" class="btn btn-cancel">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>

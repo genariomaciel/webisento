@@ -1,0 +1,34 @@
+export interface ClienteDTO {
+  id?: number;
+  nome: string;
+  cpf: string;
+  numeroRG?: string;
+  codigoOrgaoExpedidor?: string;
+  dataExpedicao?: string;
+  dataCadastro?: string;
+  numeroCNH?: string;
+  dataEmissaoCNH?: string;
+  dataValidadeCNH?: string;
+  numeroINSS?: string;
+  codigoRegimeContribuicao?: number;
+  codigoTipoSegurado?: number;
+  nomeRepresentante?: string;
+  cpfRepresentante?: string;
+  numeroRGRepresentante?: string;
+  nomeCondominio?: string;
+  codigoTipoLogradouro?: number;
+  nomeLogradouro?: string;
+  numeroLogradouro?: number;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  codigoEstado?: number;
+  cep?: string;
+  ddd?: string;
+  telefone?: string;
+  celular?: string;
+  email?: string;
+  status?: string;
+  dataCriacaoRegistro?: string;
+  dataAtualizacaoRegistro?: string;
+}

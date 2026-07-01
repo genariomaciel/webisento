@@ -1,7 +1,14 @@
 <div class="app-container">
   <header>
-    <h1>{{ title }}</h1>
-    <p>Sistema de Insenção de Impostos para Compra de Veículos</p>
+    <div class="header-content">
+      <h1>{{ title }}</h1>
+      <nav class="navbar">
+        <ul>
+          <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a></li>
+          <li><a routerLink="/clientes" routerLinkActive="active">Clientes</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
   <main>
     <router-outlet></router-outlet>

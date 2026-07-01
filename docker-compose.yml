@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DATABASE_URL=jdbc:h2:mem:testdb
+    volumes:
+      - ./backend/target:/app/target
+    networks:
+      - webisento-net
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "4200:4200"
+    command: npm install && npm start
+    networks:
+      - webisento-net
+    depends_on:
+      - api
+
+networks:
+  webisento-net:
+    driver: bridge

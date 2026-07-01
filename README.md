@@ -10,8 +10,10 @@ Aplicação Web para Insenção de Impostos na Compra de Veículo
 
 - [Stack Tecnológico](#stack-tecnológico)
 - [Estrutura do Projeto](#estrutura-do-projeto)
+- [Módulos Implementados](#módulos-implementados)
 - [URLs Importantes](#urls-importantes)
 - [Banco de Dados](#banco-de-dados)
+- [API Endpoints](#api-endpoints)
 - [Quick Start](#quick-start)
 - [Build para Produção](#build-para-produção)
 - [Docker](#docker)
@@ -50,16 +52,22 @@ webisento/
 │   │   │   │   │   ├── SecurityConfig.java
 │   │   │   │   │   └── OpenApiConfig.java
 │   │   │   │   ├── controller/
+│   │   │   │   │   ├── ClienteController.java
 │   │   │   │   │   ├── SolicitacaoController.java
 │   │   │   │   │   └── HealthController.java
 │   │   │   │   ├── service/
+│   │   │   │   │   ├── ClienteService.java
 │   │   │   │   │   └── SolicitacaoService.java
 │   │   │   │   ├── repository/
+│   │   │   │   │   ├── ClienteRepository.java
 │   │   │   │   │   └── SolicitacaoRepository.java
 │   │   │   │   ├── entity/
+│   │   │   │   │   ├── Cliente.java
+│   │   │   │   │   ├── StatusCliente.java
 │   │   │   │   │   ├── Solicitacao.java
 │   │   │   │   │   └── StatusSolicitacao.java
 │   │   │   │   └── dto/
+│   │   │   │       ├── ClienteDTO.java
 │   │   │   │       └── SolicitacaoDTO.java
 │   │   │   └── resources/
 │   │   │       ├── application.properties
@@ -77,11 +85,24 @@ webisento/
 │   │   │   ├── app.component.scss
 │   │   │   ├── app.config.ts
 │   │   │   ├── app.routes.ts
+│   │   │   ├── services/
+│   │   │   │   ├── cliente.service.ts
+│   │   │   │   └── solicitacao.service.ts
+│   │   │   ├── models/
+│   │   │   │   ├── cliente.model.ts
+│   │   │   │   └── solicitacao.model.ts
 │   │   │   └── pages/
-│   │   │       └── dashboard/
-│   │   │           ├── dashboard.component.ts
-│   │   │           ├── dashboard.component.html
-│   │   │           └── dashboard.component.scss
+│   │   │       ├── dashboard/
+│   │   │       │   ├── dashboard.component.ts
+│   │   │       │   ├── dashboard.component.html
+│   │   │       │   └── dashboard.component.scss
+│   │   │       └── cliente/
+│   │   │           ├── cliente-list.component.ts
+│   │   │           ├── cliente-list.component.html
+│   │   │           ├── cliente-list.component.scss
+│   │   │           ├── cliente-form.component.ts
+│   │   │           ├── cliente-form.component.html
+│   │   │           └── cliente-form.component.scss
 │   │   ├── index.html
 │   │   ├── styles.scss
 │   │   ├── main.ts
@@ -103,6 +124,32 @@ webisento/
 
 ---
 
+## Módulos Implementados
+
+### ✅ Módulo de Clientes (CRUD Completo)
+
+**Descrição**: Cadastro de clientes/requerentes com todos os dados pessoais, endereço, contato e representante.
+
+**Funcionalidades**:
+- ✅ Listar todos os clientes
+- ✅ Criar novo cliente
+- ✅ Editar cliente existente
+- ✅ Deletar cliente
+- ✅ Buscar por nome
+- ✅ Filtrar por status (ATIVO, INATIVO, BLOQUEADO)
+- ✅ Buscar por cidade
+- ✅ Validação de CPF obrigatório e único
+- ✅ Validação de campos obrigatórios
+
+**Campos do Cliente** (30 atributos):
+- **Pessoais**: Nome, CPF, RG, INSS, CNH, Regime Contribuição, Tipo Segurado, Datas
+- **Representante**: Nome, CPF, RG, Condomínio
+- **Endereço**: Tipo Logradouro, Logradouro, Número, Complemento, Bairro, Cidade, Estado, CEP
+- **Contato**: DDD, Telefone, Celular, Email
+- **Status**: ATIVO, INATIVO, BLOQUEADO
+
+---
+
 ## URLs Importantes
 
 ### 🌐 Desenvolvimento Local
@@ -117,113 +164,163 @@ webisento/
 | **H2 Console** | http://localhost:8080/h2-console | 8080 |
 | **Health Check** | http://localhost:8080/api/public/health | 8080 |
 
-### 📡 Endpoints da API
+### 🔗 Frontend Routes
 
-#### Health & Status
-```
-GET  /api/public/health                          # Health check da API
-```
-
-#### Solicitações (CRUD)
-```
-GET    /api/solicitacoes                         # Listar todas as solicitações
-GET    /api/solicitacoes/{id}                    # Obter solicitação por ID
-GET    /api/solicitacoes/status/{status}         # Filtrar por status
-POST   /api/solicitacoes                         # Criar nova solicitação
-PUT    /api/solicitacoes/{id}                    # Atualizar solicitação
-DELETE /api/solicitacoes/{id}                    # Deletar solicitação
-```
-
-#### Status Válidos
-- `PENDENTE` - Solicitação criada, aguardando análise
-- `EM_ANALISE` - Solicitação em análise
-- `APROVADA` - Solicitação aprovada
-- `REPROVADA` - Solicitação reprovada
-- `CANCELADA` - Solicitação cancelada
-
-### 🔐 Credentials (Desenvolvimento)
-
-**H2 Database**
-- URL: http://localhost:8080/h2-console
-- JDBC URL: `jdbc:h2:mem:testdb`
-- User: `sa`
-- Password: (deixar em branco)
+| Rota | Descrição |
+|------|-----------|
+| `/` | Dashboard |
+| `/clientes` | Lista de clientes |
+| `/clientes/novo` | Novo cliente |
+| `/clientes/:id` | Editar cliente |
 
 ---
 
 ## Banco de Dados
 
-### Tabela: `solicitacoes`
+### Tabela: `clientes`
 
-Armazena todas as solicitações de insenção de impostos para compra de veículos.
+Armazena todos os clientes/requerentes com dados pessoais, endereço, contato e representante.
 
 #### Estrutura Completa
 
 | Campo | Tipo | Constraints | Descrição |
 |-------|------|-------------|-----------|
-| `id` | BIGINT | PK, AUTO_INCREMENT | Identificador único da solicitação |
-| `nome_requerente` | VARCHAR(255) | NOT NULL | Nome completo do requerente |
-| `cpf` | VARCHAR(11) | NOT NULL, UNIQUE | CPF do requerente (sem formatação) |
-| `placa_veiculo` | VARCHAR(50) | NOT NULL | Placa do veículo (ex: ABC-1234) |
-| `marca_veiculo` | VARCHAR(100) | NOT NULL | Marca do veículo (ex: Toyota, Volkswagen) |
-| `modelo_veiculo` | VARCHAR(100) | NOT NULL | Modelo do veículo (ex: Corolla, Golf) |
-| `ano_veiculo` | INT | NOT NULL | Ano de fabricação do veículo |
-| `tipo_veiculo` | VARCHAR(50) | NOT NULL | Tipo do veículo (ex: Carro, Moto, Caminhão) |
-| `valor_veiculo` | DECIMAL(19,2) | NULL | Valor do veículo em reais |
-| `status` | ENUM | NOT NULL, DEFAULT=PENDENTE | Status atual da solicitação |
-| `observacoes` | TEXT | NULL | Observações adicionais |
-| `data_criacao` | TIMESTAMP | NOT NULL, IMMUTABLE | Data/hora da criação |
-| `data_atualizacao` | TIMESTAMP | NOT NULL | Data/hora da última atualização |
+| `id` | BIGINT | PK, AUTO_INCREMENT | Identificador único |
+| `nome` | VARCHAR(255) | NOT NULL | Nome completo do cliente |
+| `cpf` | VARCHAR(11) | NOT NULL, UNIQUE | CPF (sem formatação) |
+| `numero_rg` | VARCHAR(20) | - | Número do RG |
+| `codigo_orgao_expedidor` | VARCHAR(10) | - | Órgão expedidor do RG |
+| `data_expedicao` | DATE | - | Data de expedição do RG |
+| `data_cadastro` | DATE | - | Data de cadastro |
+| `numero_cnh` | VARCHAR(20) | - | Número da CNH |
+| `data_emissao_cnh` | DATE | - | Data de emissão da CNH |
+| `data_validade_cnh` | DATE | - | Data de validade da CNH |
+| `numero_inss` | VARCHAR(20) | - | Número do INSS |
+| `codigo_regime_contribuicao` | INT | - | Código do regime |
+| `codigo_tipo_segurado` | INT | - | Código do tipo segurado |
+| `nome_representante` | VARCHAR(255) | - | Nome do representante |
+| `cpf_representante` | VARCHAR(11) | - | CPF do representante |
+| `numero_rg_representante` | VARCHAR(20) | - | RG do representante |
+| `nome_condominio` | VARCHAR(255) | - | Nome do condomínio |
+| `codigo_tipo_logradouro` | INT | - | Tipo de logradouro |
+| `nome_logradouro` | VARCHAR(255) | - | Nome do logradouro |
+| `numero_logradouro` | INT | - | Número do logradouro |
+| `complemento` | VARCHAR(255) | - | Complemento do endereço |
+| `bairro` | VARCHAR(100) | - | Bairro |
+| `cidade` | VARCHAR(100) | - | Cidade |
+| `codigo_estado` | INT | - | Código do estado |
+| `cep` | VARCHAR(10) | - | CEP |
+| `ddd` | VARCHAR(5) | - | DDD |
+| `telefone` | VARCHAR(15) | - | Telefone |
+| `celular` | VARCHAR(15) | - | Celular |
+| `email` | VARCHAR(100) | - | Email |
+| `status` | ENUM | NOT NULL, DEFAULT=ATIVO | Status (ATIVO, INATIVO, BLOQUEADO) |
+| `data_criacao_registro` | TIMESTAMP | NOT NULL, IMMUTABLE | Data/hora de criação |
+| `data_atualizacao_registro` | TIMESTAMP | NOT NULL | Data/hora de atualização |
 
 #### Índices
 - `id` - Chave primária
-- `cpf` - Índice único (uma solicitação por CPF)
-- `status` - Índice para buscas por status
+- `cpf` - Índice único
+- `status` - Índice para filtros
 
 #### Exemplo de Registro
 
 ```json
 {
   "id": 1,
-  "nomeRequerente": "João da Silva",
+  "nome": "João Silva",
   "cpf": "12345678901",
-  "placaVeiculo": "ABC-1234",
-  "marcaVeiculo": "Toyota",
-  "modeloVeiculo": "Corolla",
-  "anoVeiculo": 2023,
-  "tipoVeiculo": "Automóvel",
-  "valorVeiculo": 150000.00,
-  "status": "PENDENTE",
-  "observacoes": "Solicitação de isenção de IPI",
-  "dataCriacao": "2024-01-15T10:30:00",
-  "dataAtualizacao": "2024-01-15T10:30:00"
+  "numeroRG": "123456789",
+  "codigoOrgaoExpedidor": "SSP",
+  "dataExpedicao": "2020-01-15",
+  "dataCadastro": "2024-01-15",
+  "numeroCNH": "9876543210",
+  "dataEmissaoCNH": "2019-05-20",
+  "dataValidadeCNH": "2029-05-20",
+  "numeroINSS": "123456789",
+  "codigoRegimeContribuicao": 1,
+  "codigoTipoSegurado": 1,
+  "nomeRepresentante": "Maria Silva",
+  "cpfRepresentante": "98765432101",
+  "numeroRGRepresentante": "987654321",
+  "nomeCondominio": "Condomínio Exemplo",
+  "codigoTipoLogradouro": 1,
+  "nomeLogradouro": "Rua das Flores",
+  "numeroLogradouro": 123,
+  "complemento": "Apto 42",
+  "bairro": "Centro",
+  "cidade": "São Paulo",
+  "codigoEstado": 25,
+  "cep": "01310100",
+  "ddd": "11",
+  "telefone": "33334444",
+  "celular": "987654321",
+  "email": "joao@example.com",
+  "status": "ATIVO",
+  "dataCriacaoRegistro": "2024-01-15T10:30:00",
+  "dataAtualizacaoRegistro": "2024-01-15T10:30:00"
 }
 ```
 
-### Script SQL de Inicialização (H2)
+### Tabela: `solicitacoes`
 
-```sql
--- Criação da tabela
-CREATE TABLE solicitacoes (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nome_requerente VARCHAR(255) NOT NULL,
-    cpf VARCHAR(11) NOT NULL UNIQUE,
-    placa_veiculo VARCHAR(50) NOT NULL,
-    marca_veiculo VARCHAR(100) NOT NULL,
-    modelo_veiculo VARCHAR(100) NOT NULL,
-    ano_veiculo INT NOT NULL,
-    tipo_veiculo VARCHAR(50) NOT NULL,
-    valor_veiculo DECIMAL(19, 2),
-    status VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
-    observacoes TEXT,
-    data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_atualizacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+Armazena todas as solicitações de insenção de impostos para compra de veículos.
 
--- Índices
-CREATE INDEX idx_status ON solicitacoes(status);
-CREATE UNIQUE INDEX idx_cpf ON solicitacoes(cpf);
+#### Estrutura
+
+| Campo | Tipo | Constraints | Descrição |
+|-------|------|-------------|-----------|
+| `id` | BIGINT | PK, AUTO_INCREMENT | Identificador único |
+| `nome_requerente` | VARCHAR(255) | NOT NULL | Nome do requerente |
+| `cpf` | VARCHAR(11) | NOT NULL, UNIQUE | CPF (sem formatação) |
+| `placa_veiculo` | VARCHAR(50) | NOT NULL | Placa do veículo |
+| `marca_veiculo` | VARCHAR(100) | NOT NULL | Marca do veículo |
+| `modelo_veiculo` | VARCHAR(100) | NOT NULL | Modelo do veículo |
+| `ano_veiculo` | INT | NOT NULL | Ano de fabricação |
+| `tipo_veiculo` | VARCHAR(50) | NOT NULL | Tipo de veículo |
+| `valor_veiculo` | DECIMAL(19,2) | - | Valor do veículo |
+| `status` | ENUM | NOT NULL, DEFAULT=PENDENTE | Status da solicitação |
+| `observacoes` | TEXT | - | Observações |
+| `data_criacao` | TIMESTAMP | NOT NULL, IMMUTABLE | Data de criação |
+| `data_atualizacao` | TIMESTAMP | NOT NULL | Data de atualização |
+
+---
+
+## API Endpoints
+
+### Health & Status
+
 ```
+GET  /api/public/health                          # Health check da API
+```
+
+### Clientes (CRUD)
+
+```
+GET    /api/clientes                             # Listar todos os clientes
+GET    /api/clientes/{id}                        # Obter cliente por ID
+GET    /api/clientes/status/{status}             # Filtrar por status
+GET    /api/clientes/buscar/nome?nome={nome}    # Buscar por nome
+GET    /api/clientes/buscar/cidade?cidade={cidade} # Buscar por cidade
+POST   /api/clientes                             # Criar novo cliente
+PUT    /api/clientes/{id}                        # Atualizar cliente
+DELETE /api/clientes/{id}                        # Deletar cliente
+```
+
+**Status Válidos**: `ATIVO`, `INATIVO`, `BLOQUEADO`
+
+### Solicitações (CRUD)
+
+```
+GET    /api/solicitacoes                         # Listar todas
+GET    /api/solicitacoes/{id}                    # Obter por ID
+GET    /api/solicitacoes/status/{status}         # Filtrar por status
+POST   /api/solicitacoes                         # Criar nova
+PUT    /api/solicitacoes/{id}                    # Atualizar
+DELETE /api/solicitacoes/{id}                    # Deletar
+```
+
+**Status Válidos**: `PENDENTE`, `EM_ANALISE`, `APROVADA`, `REPROVADA`, `CANCELADA`
 
 ---
 
@@ -436,89 +533,98 @@ Acesse: **http://localhost:8080/v3/api-docs**
 
 Documentação em formato OpenAPI 3.0 para integração com ferramentas externas.
 
-### Exemplo de Requisição com cURL
+### Exemplo de Requisições com cURL
 
-#### Criar Solicitação
+#### Criar Cliente
 
 ```bash
-curl -X POST http://localhost:8080/api/solicitacoes \
+curl -X POST http://localhost:8080/api/clientes \
   -H "Content-Type: application/json" \
   -d '{
-    "nomeRequerente": "João da Silva",
+    "nome": "João Silva",
     "cpf": "12345678901",
-    "placaVeiculo": "ABC-1234",
-    "marcaVeiculo": "Toyota",
-    "modeloVeiculo": "Corolla",
-    "anoVeiculo": 2023,
-    "tipoVeiculo": "Automóvel",
-    "valorVeiculo": 150000.00,
-    "observacoes": "Solicitação de isenção de IPI"
+    "email": "joao@example.com",
+    "cidade": "São Paulo",
+    "status": "ATIVO"
   }'
 ```
 
-#### Listar Solicitações
+#### Listar Clientes
 
 ```bash
-curl http://localhost:8080/api/solicitacoes
+curl http://localhost:8080/api/clientes
+```
+
+#### Buscar Cliente por Nome
+
+```bash
+curl http://localhost:8080/api/clientes/buscar/nome?nome=João
 ```
 
 #### Filtrar por Status
 
 ```bash
-curl http://localhost:8080/api/solicitacoes/status/PENDENTE
+curl http://localhost:8080/api/clientes/status/ATIVO
 ```
 
-#### Obter Solicitação por ID
+#### Obter Cliente por ID
 
 ```bash
-curl http://localhost:8080/api/solicitacoes/1
+curl http://localhost:8080/api/clientes/1
 ```
 
-#### Atualizar Solicitação
+#### Atualizar Cliente
 
 ```bash
-curl -X PUT http://localhost:8080/api/solicitacoes/1 \
+curl -X PUT http://localhost:8080/api/clientes/1 \
   -H "Content-Type: application/json" \
   -d '{
-    "nomeRequerente": "João da Silva",
+    "nome": "João da Silva",
     "cpf": "12345678901",
-    "placaVeiculo": "ABC-1234",
-    "marcaVeiculo": "Toyota",
-    "modeloVeiculo": "Corolla",
-    "anoVeiculo": 2023,
-    "tipoVeiculo": "Automóvel",
-    "valorVeiculo": 150000.00,
-    "status": "APROVADA",
-    "observacoes": "Solicitação aprovada"
+    "email": "joao.silva@example.com",
+    "cidade": "Rio de Janeiro",
+    "status": "ATIVO"
   }'
 ```
 
-#### Deletar Solicitação
+#### Deletar Cliente
 
 ```bash
-curl -X DELETE http://localhost:8080/api/solicitacoes/1
+curl -X DELETE http://localhost:8080/api/clientes/1
 ```
 
 ---
 
 ## Recursos Principais
 
+### Implementados ✅
+
 - [x] Estrutura base com Spring Boot e Angular
-- [x] API REST CRUD para Solicitações
+- [x] CRUD de Clientes com 30 campos
+- [x] CRUD de Solicitações
 - [x] Banco de dados com JPA/Hibernate
 - [x] Swagger/OpenAPI Documentation
 - [x] CORS configurado
 - [x] Health Check Endpoint
 - [x] Frontend embarcado no JAR
 - [x] Docker Compose para desenvolvimento
+- [x] Listagem com paginação
+- [x] Busca e filtros
+- [x] Validação de dados
+- [x] Componentes reutilizáveis
+
+### Em Desenvolvimento 🚧
+
 - [ ] Autenticação JWT
-- [ ] Validação robusta de dados
+- [ ] Upload de documentos
 - [ ] Cálculo automático de impostos
 - [ ] Módulo de relatórios
 - [ ] Testes unitários e integração
 - [ ] CI/CD (GitHub Actions)
 - [ ] Cache com Redis
 - [ ] Logging centralizado
+- [ ] Exportação para PDF
+- [ ] Notificações por email
 
 ---
 
@@ -619,3 +725,5 @@ Para dúvidas ou problemas:
 ---
 
 **Última atualização**: 01 de Julho de 2026
+
+**Última mudança**: Adição do Módulo de Clientes com CRUD completo (17 arquivos)
